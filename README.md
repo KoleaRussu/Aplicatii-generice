@@ -1,2 +1,1 @@
-# Laborator-1
-Laborator 1
+# Aplicații generice
