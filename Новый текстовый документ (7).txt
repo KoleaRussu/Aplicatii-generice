@@ -1,0 +1,118 @@
+CREATE TABLE Поставщики (
+  id_furnizor INT PRIMARY KEY,
+  Имя VARCHAR(50),
+  Фамилия VARCHAR(50),
+  Адрес VARCHAR(100),
+  Номер_телефона VARCHAR(20),
+  id_firma INT,
+  FOREIGN KEY (id_firma) REFERENCES Фирмы(ID_firma)
+);
+
+-- Создание таблицы "Заказы"
+CREATE TABLE Заказы (
+  id_zakaz INT PRIMARY KEY,
+  id_furnizor INT,
+  id_product INT,
+  Дата_Заказа DATE,
+  FOREIGN KEY (id_furnizor) REFERENCES Поставщики(id_furnizor),
+  FOREIGN KEY (id_product) REFERENCES Продукты(id_product)
+);
+
+-- Создание таблицы "Продукты"
+CREATE TABLE Продукты (
+  id_product INT PRIMARY KEY,
+  Цена DECIMAL(10, 2),
+  Описание VARCHAR(200),
+  Название VARCHAR(100),
+  ID_categorii INT,
+  FOREIGN KEY (ID_categorii) REFERENCES Категории(id_categorii)
+);
+
+-- Создание таблицы "Категории"
+CREATE TABLE Категории (
+  id_categorii INT PRIMARY KEY,
+  Наименование VARCHAR(100)
+);
+
+-- Создание таблицы "Фирмы"
+CREATE TABLE Фирмы (
+  ID_firma INT PRIMARY KEY,
+  Название VARCHAR(100),
+  Специализация VARCHAR(100),
+  Год_открытия INT
+);
+
+-- Заполнение таблицы "Фирмы"
+INSERT INTO Фирмы (ID_firma, Название, Специализация, Год_открытия)
+VALUES (1, 'Фирма "Молдавский продукт"', 'Производство пищевых продуктов', 2005),
+       (2, 'Фирма "Технополис"', 'Продажа электроники', 1998),
+       (3, 'Фирма "Молдавская мебель"', 'Производство мебели', 2012);
+
+-- Заполнение таблицы "Категории"
+INSERT INTO Категории (id_categorii, Наименование)
+VALUES (1, 'Продукты питания'),
+       (2, 'Электроника'),
+       (3, 'Мебель');
+
+-- Заполнение таблицы "Продукты"
+-- Заполнение таблицы "Продукты"
+INSERT INTO Продукты (id_product, Цена, Описание, Название, ID_categorii)
+VALUES (4, 3.49, 'Молоко', 'Молоко', 1),
+       (5, 19.99, 'Смартфон Samsung', 'Смартфон Samsung', 2),
+       (6, 14.99, 'Стул', 'Стул', 3),
+       (7, 2.99, 'Хлеб', 'Хлеб', 1),
+       (8, 8.49, 'Ноутбук Lenovo', 'Ноутбук Lenovo', 2),
+       (9, 12.99, 'Диван', 'Диван', 3),
+       (10, 1.99, 'Яйца', 'Яйца', 1);
+
+-- Заполнение таблицы "Поставщики"
+INSERT INTO Поставщики (id_furnizor, Имя, Фамилия, Адрес, Номер_телефона, id_firma)
+VALUES (1, 'Иван', 'Иванов', 'ул. Ленина, 10', '22222222', 1),
+       (2, 'Петр', 'Петров', 'ул. Пушкина, 5', '33333333', 2),
+       (3, 'Алексей', 'Сидоров', 'ул. Степана Чел Маре, 15', '44444444', 3);
+
+-- Заполнение таблицы "Заказы"
+INSERT INTO Заказы (id_zakaz, id_furnizor, id_product, Дата_Заказа)
+VALUES (1, 1, 1, '2023-05-20'),
+       (2, 2, 2, '2023-05-21'),
+       (3, 3, 3, '2023-05-22');
+
+
+SELECT * FROM Продукты;
+
+SELECT * FROM Поставщики WHERE Номер_телефона LIKE '22%';
+
+SELECT Продукты.*, Категории.Наименование
+FROM Продукты
+JOIN Категории ON Продукты.ID_categorii = Категории.id_categorii;
+
+UPDATE Продукты SET Цена = 9.99 WHERE id_product = 3;
+
+UPDATE Поставщики SET Адрес = 'ул. Новая, 20' WHERE id_furnizor = 2;
+
+DELETE FROM Заказы WHERE id_zakaz = 5;
+
+DELETE FROM Продукты WHERE Цена > 20;
+
+SELECT * FROM Продукты WHERE Цена < 10;
+
+UPDATE Фирмы SET Специализация = 'Электроника' WHERE ID_firma = 3;
+
+SELECT Категории.Наименование, COUNT(Продукты.id_product) AS Количество_продуктов
+FROM Категории
+LEFT JOIN Продукты ON Категории.id_categorii = Продукты.ID_categorii
+GROUP BY Категории.id_categorii;
+
+SELECT * FROM Поставщики WHERE Адрес LIKE '%';
+
+SELECT *
+FROM Поставщики
+WHERE Фамилия LIKE 'И%';
+
+SELECT *
+FROM Заказы
+WHERE Дата_Заказа > :Дата;
+
+SELECT *
+FROM Продукты
+WHERE ID_categorii = :ID_категории AND Цена < :Максимальная_цена;
